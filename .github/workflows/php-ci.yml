@@ -1,0 +1,39 @@
+name: Simple PHP Website CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Verify PHP files exist
+        run: |
+          set -euo pipefail
+          test -f index.php
+          test -f process_form.php
+          echo "PHP files found"
+
+      - name: PHP Lint Check
+        run: |
+          set -euo pipefail
+          php -l index.php
+          php -l process_form.php
+          echo "All PHP files passed syntax checks"
+
+      - name: Execute PHP script
+        run: |
+          set -euo pipefail
+          php index.php > output.txt
+          test -f output.txt
+          echo "PHP executed successfully"
